@@ -18,7 +18,7 @@ mongodb()
   .then(() => {
     app.use(
       cors({
-        origin: "http://localhost:3000",
+        origin: "https://ai-edu-genie-5s85.vercel.app",
         credentials: true,
       })
     );
