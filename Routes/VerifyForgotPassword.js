@@ -28,9 +28,12 @@ router.post(
       };
 
       // Use $unset to remove specified fields from the user document
-      await forgot.findByIdAndUpdate(emailExists._id, {
-        $unset: fieldsToRemove,
-      });
+      await forgot.findOneAndUpdate(
+        { UserId: emailExists._id },
+        {
+          $unset: fieldsToRemove,
+        }
+      );
       let passwordExists = await bcrypt.compare(password, emailExists.password);
       if (passwordExists) {
         throw createHttpError.Unauthorized(
