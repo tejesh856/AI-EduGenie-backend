@@ -21,6 +21,12 @@ router.post(
       if (!forgotuser.token) {
         throw createHttpError.Unauthorized("link not generated or expired");
       }
+      let passwordExists = await bcrypt.compare(password, emailExists.password);
+      if (passwordExists) {
+        throw createHttpError.Unauthorized(
+          "This password is already in use. Please choose a different one."
+        );
+      }
       const fieldsToRemove = {
         token: "",
         expiredAt: "",
@@ -34,12 +40,6 @@ router.post(
           $unset: fieldsToRemove,
         }
       );
-      let passwordExists = await bcrypt.compare(password, emailExists.password);
-      if (passwordExists) {
-        throw createHttpError.Unauthorized(
-          "This password is already in use. Please choose a different one."
-        );
-      }
       const salt = await bcrypt.genSalt(10);
       let secpassword = await bcrypt.hash(password, salt);
       emailExists.password = secpassword;
